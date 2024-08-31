@@ -1,5 +1,5 @@
-name = "PKGNAME"
-uuid = "00000000-0000-0000-0000-123456789010"
+name = "NormalizingFlowFilters"
+uuid = "bdff3154-b03d-49d9-ae6e-73db1909c910"
 authors = ["Grant Bruer gbruer15@gmail.com and contributors"]
 version = "1.0.0-DEV"
 

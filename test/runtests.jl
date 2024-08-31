@@ -1,5 +1,5 @@
 using Pkg: Pkg
-using PKGNAME
+using NormalizingFlowFilters
 using Test
 using TestReports
 using Aqua
@@ -7,28 +7,28 @@ using Documenter
 
 ts = @testset ReportingTestSet "" begin
     @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(PKGNAME; ambiguities=false)
-        Aqua.test_ambiguities(PKGNAME)
+        Aqua.test_all(NormalizingFlowFilters; ambiguities=false)
+        Aqua.test_ambiguities(NormalizingFlowFilters)
     end
 
     include("test_pkg_stuff.jl")
 
     # Set metadata for doctests.
-    DocMeta.setdocmeta!(PKGNAME, :DocTestSetup, :(using PKGNAME, Test); recursive=true)
-    if PKGNAME.HAS_NATIVE_EXTENSIONS
+    DocMeta.setdocmeta!(NormalizingFlowFilters, :DocTestSetup, :(using NormalizingFlowFilters, Test); recursive=true)
+    if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
         using Random
         DocMeta.setdocmeta!(
-            PKGNAME.get_extension(PKGNAME, :RandomExt),
+            NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
             :DocTestSetup,
-            :(using PKGNAME, Test);
+            :(using NormalizingFlowFilters, Test);
             recursive=true,
         )
     end
 
     # Run doctests.
-    doctest(PKGNAME; manual=true)
-    if PKGNAME.HAS_NATIVE_EXTENSIONS
-        doctest(PKGNAME.get_extension(PKGNAME, :RandomExt); manual=true)
+    doctest(NormalizingFlowFilters; manual=true)
+    if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
+        doctest(NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt); manual=true)
     end
 
     # Run examples.

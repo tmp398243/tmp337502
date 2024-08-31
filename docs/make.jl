@@ -1,7 +1,7 @@
 using Pkg: Pkg
-using PKGNAME
+using NormalizingFlowFilters
 using Documenter
-using Random # Loads PKGNAME Random extension.
+using Random # Loads NormalizingFlowFilters Random extension.
 
 using Literate
 
@@ -89,30 +89,30 @@ for (ex, pth) in examples
 end
 
 # Set metadata for doctests.
-DocMeta.setdocmeta!(PKGNAME, :DocTestSetup, :(using PKGNAME, Test); recursive=true)
-if PKGNAME.HAS_NATIVE_EXTENSIONS
+DocMeta.setdocmeta!(NormalizingFlowFilters, :DocTestSetup, :(using NormalizingFlowFilters, Test); recursive=true)
+if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
     using Random
     DocMeta.setdocmeta!(
-        PKGNAME.get_extension(PKGNAME, :RandomExt),
+        NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
         :DocTestSetup,
-        :(using PKGNAME, Test);
+        :(using NormalizingFlowFilters, Test);
         recursive=true,
     )
 end
 makedocs(;
-    modules=[PKGNAME, PKGNAME.get_extension(PKGNAME, :RandomExt)],
+    modules=[NormalizingFlowFilters, NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)],
     authors="Grant Bruer gbruer15@gmail.com and contributors",
-    sitename="PKGNAME.jl",
+    sitename="NormalizingFlowFilters.jl",
     source=DOC_STAGE,
     build=DOC_BUILD,
     format=Documenter.HTML(;
-        repolink="https://github.com/gbruer15/PKGNAME.jl",
-        canonical="https://gbruer15.github.io/PKGNAME.jl",
+        repolink="https://github.com/tmp398243/tmp337502",
+        canonical="https://tmp398243.github.io/tmp337502",
         edit_link="main",
         assets=String[],
         size_threshold=2 * 2^20,
     ),
-    repo="github.com/gbruer15/PKGNAME.jl",
+    repo="github.com/tmp398243/tmp337502",
     pages=[
         "Home" => "index.md",
         "Examples" => examples_markdown,

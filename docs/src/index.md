@@ -1,27 +1,27 @@
 ```@meta
-CurrentModule = PKGNAME
+CurrentModule = NormalizingFlowFilters
 ```
 
-# PKGNAME
+# NormalizingFlowFilters
 
-Documentation for [PKGNAME](https://github.com/gbruer15/PKGNAME.jl).
+Documentation for [NormalizingFlowFilters](https://github.com/tmp398243/tmp337502).
 
 
 ```@index
-Modules = [PKGNAME]
+Modules = [NormalizingFlowFilters]
 ```
 
 ```@autodocs
-Modules = [PKGNAME]
+Modules = [NormalizingFlowFilters]
 ```
 
 
 # Extensions
 
 ```@index
-Modules = [PKGNAME.get_extension(PKGNAME, :RandomExt)]
+Modules = [NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)]
 ```
 
 ```@autodocs
-Modules = [PKGNAME.get_extension(PKGNAME, :RandomExt)]
+Modules = [NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)]
 ```
