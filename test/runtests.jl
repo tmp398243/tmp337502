@@ -14,7 +14,12 @@ ts = @testset ReportingTestSet "" begin
     include("test_pkg_stuff.jl")
 
     # Set metadata for doctests.
-    DocMeta.setdocmeta!(NormalizingFlowFilters, :DocTestSetup, :(using NormalizingFlowFilters, Test); recursive=true)
+    DocMeta.setdocmeta!(
+        NormalizingFlowFilters,
+        :DocTestSetup,
+        :(using NormalizingFlowFilters, Test);
+        recursive=true,
+    )
     if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
         using Random
         DocMeta.setdocmeta!(
@@ -28,7 +33,10 @@ ts = @testset ReportingTestSet "" begin
     # Run doctests.
     doctest(NormalizingFlowFilters; manual=true)
     if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
-        doctest(NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt); manual=true)
+        doctest(
+            NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt);
+            manual=true,
+        )
     end
 
     # Run examples.
