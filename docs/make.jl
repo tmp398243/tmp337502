@@ -89,7 +89,12 @@ for (ex, pth) in examples
 end
 
 # Set metadata for doctests.
-DocMeta.setdocmeta!(NormalizingFlowFilters, :DocTestSetup, :(using NormalizingFlowFilters, Test); recursive=true)
+DocMeta.setdocmeta!(
+    NormalizingFlowFilters,
+    :DocTestSetup,
+    :(using NormalizingFlowFilters, Test);
+    recursive=true,
+)
 if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
     using Random
     DocMeta.setdocmeta!(
@@ -100,7 +105,10 @@ if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
     )
 end
 makedocs(;
-    modules=[NormalizingFlowFilters, NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)],
+    modules=[
+        NormalizingFlowFilters,
+        NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
+    ],
     authors="Grant Bruer gbruer15@gmail.com and contributors",
     sitename="NormalizingFlowFilters.jl",
     source=DOC_STAGE,
