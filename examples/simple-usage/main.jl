@@ -12,16 +12,12 @@ using Test
 glow_config = ConditionalGlowOptions()
 network = NetworkConditionalGlow(2, glow_config)
 
-optimizer_config = OptimizerOptions(lr=1e-3)
+optimizer_config = OptimizerOptions(; lr=1e-3)
 optimizer = create_optimizer(optimizer_config)
 
 device = cpu
-training_config = TrainingOptions(
-    n_epochs=32,
-    num_post_samples=4,
-    noise_lev_y=1e-1,
-    noise_lev_x=1e-1,
-    batch_size=16,
+training_config = TrainingOptions(;
+    n_epochs=32, num_post_samples=4, noise_lev_y=1e-1, noise_lev_x=1e-1, batch_size=16
 )
 
 filter = NormalizingFlowFilter(network, optimizer; device, training_config)
@@ -68,10 +64,7 @@ fresh_samples = draw_posterior_samples(
 
 # Plot some training metrics.
 
-common_kwargs = (;
-    linewidth = 3,
-    markersize = 15,
-)
+common_kwargs = (; linewidth=3, markersize=15)
 
 fig = Figure()
 
@@ -94,7 +87,7 @@ lines_test = lines!(ax, test_epochs, misfit_test; label="test", common_kwargs...
 
 ax.xlabel = "epoch number"
 ax.ylabel = "loss: 2-norm"
-fig[1, end+1] = Legend(fig, ax, labelsize=14, unique=true)
+fig[1, end + 1] = Legend(fig, ax; labelsize=14, unique=true)
 
 ax.title = "Batch size: $(training_config.batch_size)"
 

@@ -55,15 +55,15 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
     N = (size(Xs, 1), size(Xs, 2))
 
     # Training logs 
-    loss = Vector{Float64}();
-    logdet_train = Vector{Float64}();
-    ssim = Vector{Float64}();
-    l2_cm = Vector{Float64}();
+    loss = Vector{Float64}()
+    logdet_train = Vector{Float64}()
+    ssim = Vector{Float64}()
+    l2_cm = Vector{Float64}()
 
-    loss_test = Vector{Float64}();
-    logdet_test = Vector{Float64}();
-    ssim_test = Vector{Float64}();
-    l2_cm_test = Vector{Float64}();
+    loss_test = Vector{Float64}()
+    logdet_test = Vector{Float64}()
+    ssim_test = Vector{Float64}()
+    l2_cm_test = Vector{Float64}()
 
     # Use MLutils to split into training and validation set
     (X_train, Y_train), (X_test, Y_test) = splitobs(
@@ -176,18 +176,18 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
     end
     if !isnothing(log_data)
         log_data[:network_training] = Dict{Symbol,Any}(
-            :training => Dict{Symbol, Any}(
+            :training => Dict{Symbol,Any}(
                 :loss => loss,
                 :logdet => logdet_train,
                 :ssim_cm => ssim,
                 :l2_cm => l2_cm,
             ),
-            :testing => Dict{Symbol, Any}(
+            :testing => Dict{Symbol,Any}(
                 :loss => loss_test,
                 :logdet => logdet_test,
                 :ssim => ssim_test,
                 :l2_cm => l2_cm_test,
-            )
+            ),
         )
     end
 end
