@@ -17,14 +17,7 @@ function get_cm_l2_ssim(G, X, Y, X_batch, Y_batch; device=gpu, num_samples, batc
         y_i = Y_batch[:, :, :, i:i]
         x_i = X_batch[:, :, :, i:i]
         X_post_test = draw_posterior_samples(
-            G,
-            y_i,
-            X,
-            Y,
-            size(x_i);
-            device,
-            num_samples,
-            batch_size,
+            G, y_i, X, Y, size(x_i); device, num_samples, batch_size
         )
         X_post_mean_test = mean(X_post_test; dims=4)
         ssim_total += assess_ssim(X_post_mean_test[:, :, 1, 1], cpu(x_i[:, :, 1, 1]))
@@ -62,15 +55,15 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
     N = (size(Xs, 1), size(Xs, 2))
 
     # Training logs 
-    loss = [];
-    logdet_train = [];
-    ssim = [];
-    l2_cm = [];
+    loss = []
+    logdet_train = []
+    ssim = []
+    l2_cm = []
 
-    loss_test = [];
-    logdet_test = [];
-    ssim_test = [];
-    l2_cm_test = [];
+    loss_test = []
+    logdet_test = []
+    ssim_test = []
+    l2_cm_test = []
 
     # Use MLutils to split into training and validation set
     (X_train, Y_train), (X_test, Y_test) = splitobs(
@@ -84,7 +77,7 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
     n_batches = cld(n_train, cfg.batch_size)
     #n_batches_test = cld(n_test, cfg.batch_size)
 
-    for e in 1:cfg.n_epochs# epoch loop
+    for e in 1:(cfg.n_epochs)# epoch loop
         idx_e = reshape(randperm(n_train), cfg.batch_size, n_batches)
 
         for b in 1:n_batches # batch loop
@@ -94,7 +87,7 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
                 X .+= cfg.noise_lev_x * randn(Float32, size(X))
                 Y .+= cfg.noise_lev_y * randn(Float32, size(Y))
 
-                for i in 1:cfg.batch_size
+                for i in 1:(cfg.batch_size)
                     if rand() > 0.5
                         X[:, :, :, i:i] = X[end:-1:1, :, :, i:i]
                         Y[:, :, :, i:i] = Y[end:-1:1, :, :, i:i]
@@ -139,7 +132,12 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
         end
         # get objective mean metrics over testing batch  
         @time l2_test_val, lgdet_test_val = get_loss(
-            filter.network_device, X_test, Y_test; device, batch_size=cfg.batch_size, N, 
+            filter.network_device,
+            X_test,
+            Y_test;
+            device,
+            batch_size=cfg.batch_size,
+            N,
             noise_lev_x=cfg.noise_lev_x,
             noise_lev_y=cfg.noise_lev_y,
         )
@@ -151,11 +149,11 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
             filter.network_device,
             Xs,
             Ys,
-            X_train[:, :, :, 1:cfg.n_condmean],
-            Y_train[:, :, :, 1:cfg.n_condmean];
+            X_train[:, :, :, 1:(cfg.n_condmean)],
+            Y_train[:, :, :, 1:(cfg.n_condmean)];
             device,
             num_samples=cfg.num_post_samples,
-            batch_size=cfg.batch_size
+            batch_size=cfg.batch_size,
         )
         append!(ssim, cm_ssim_train)
         append!(l2_cm, cm_l2_train)
@@ -166,11 +164,11 @@ function train_network!(filter::NormalizingFlowFilter, Xs, Ys; log_data=nothing)
                 filter.network_device,
                 Xs,
                 Ys,
-                X_test[:, :, :, 1:cfg.n_condmean],
-                Y_test[:, :, :, 1:cfg.n_condmean];
+                X_test[:, :, :, 1:(cfg.n_condmean)],
+                Y_test[:, :, :, 1:(cfg.n_condmean)];
                 device,
                 num_samples=cfg.num_post_samples,
-                batch_size=cfg.batch_size
+                batch_size=cfg.batch_size,
             )
             append!(ssim_test, cm_ssim_test)
             append!(l2_cm_test, cm_l2_test)

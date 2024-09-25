@@ -95,9 +95,7 @@ DocMeta.setdocmeta!(
     recursive=true,
 )
 makedocs(;
-    modules=[
-        NormalizingFlowFilters,
-    ],
+    modules=[NormalizingFlowFilters],
     authors="Grant Bruer gbruer15@gmail.com and contributors",
     sitename="NormalizingFlowFilters.jl",
     source=DOC_STAGE,

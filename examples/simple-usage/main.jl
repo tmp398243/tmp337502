@@ -11,11 +11,11 @@ using Test
 glow_config = ConditionalGlowOptions()
 network = NetworkConditionalGlow(2, glow_config)
 
-optimizer_config = OptimizerOptions(lr=1e-20)
+optimizer_config = OptimizerOptions(; lr=1e-20)
 optimizer = create_optimizer(optimizer_config)
 
 device = cpu
-training_config = TrainingOptions(num_post_samples=2, noise_lev_y=1e0, noise_lev_x=1e0)
+training_config = TrainingOptions(; num_post_samples=2, noise_lev_y=1e0, noise_lev_x=1e0)
 
 filter = NormalizingFlowFilter(network, optimizer; device, training_config)
 
@@ -50,7 +50,9 @@ fresh_samples = draw_posterior_samples(
     num_samples=10,
     batch_size=filter.training_config.batch_size,
     log_data=nothing,
-)[1, 1, :, :]
+)[
+    1, 1, :, :,
+]
 
 @show mean(fresh_samples; dims=2) std(fresh_samples; dims=2)
 
