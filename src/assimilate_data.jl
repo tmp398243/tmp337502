@@ -32,7 +32,6 @@ function draw_posterior_samples(
     y_r = reshape(cpu(y), 1, 1, :, 1)
     Y_train_latent_repeat = device(repeat(y_r, 1, 1, 1, batch_size))
     Zx_fixed_train, Zy_fixed_train, _ = G.forward(X_forward, Y_train_latent_repeat)
-    @show Zy_fixed_train y
 
     X_post = zeros(Float32, size_x[1:(end - 1)]..., num_samples)
     for i in 1:div(num_samples, batch_size)
