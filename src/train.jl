@@ -1,6 +1,7 @@
 using Flux: Flux
 using LinearAlgebra: norm
 using MLUtils: splitobs
+using Images: assess_ssim
 using Random: randn, randperm
 using InvertibleNetworks: clear_grad!, get_params
 using Statistics: mean

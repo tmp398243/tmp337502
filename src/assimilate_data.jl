@@ -1,6 +1,5 @@
 using Flux: cpu, gpu
 using LinearAlgebra: norm
-using Images: assess_ssim
 using Random: randn
 
 export assimilate_data, draw_posterior_samples
