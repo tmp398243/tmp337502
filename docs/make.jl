@@ -1,7 +1,6 @@
 using Pkg: Pkg
 using NormalizingFlowFilters
 using Documenter
-using Random # Loads NormalizingFlowFilters Random extension.
 
 using Literate
 
@@ -95,19 +94,9 @@ DocMeta.setdocmeta!(
     :(using NormalizingFlowFilters, Test);
     recursive=true,
 )
-if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
-    using Random
-    DocMeta.setdocmeta!(
-        NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
-        :DocTestSetup,
-        :(using NormalizingFlowFilters, Test);
-        recursive=true,
-    )
-end
 makedocs(;
     modules=[
         NormalizingFlowFilters,
-        NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
     ],
     authors="Grant Bruer gbruer15@gmail.com and contributors",
     sitename="NormalizingFlowFilters.jl",

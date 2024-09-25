@@ -5,13 +5,15 @@ using TestReports
 using Aqua
 using Documenter
 
+include("test_assimilate_data.jl")
+
 ts = @testset ReportingTestSet "" begin
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(NormalizingFlowFilters; ambiguities=false)
         Aqua.test_ambiguities(NormalizingFlowFilters)
     end
 
-    include("test_pkg_stuff.jl")
+    include("test_assimilate_data.jl")
 
     # Set metadata for doctests.
     DocMeta.setdocmeta!(
@@ -20,24 +22,9 @@ ts = @testset ReportingTestSet "" begin
         :(using NormalizingFlowFilters, Test);
         recursive=true,
     )
-    if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
-        using Random
-        DocMeta.setdocmeta!(
-            NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt),
-            :DocTestSetup,
-            :(using NormalizingFlowFilters, Test);
-            recursive=true,
-        )
-    end
 
     # Run doctests.
     doctest(NormalizingFlowFilters; manual=true)
-    if NormalizingFlowFilters.HAS_NATIVE_EXTENSIONS
-        doctest(
-            NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt);
-            manual=true,
-        )
-    end
 
     # Run examples.
     examples_dir = joinpath(@__DIR__, "..", "examples")
