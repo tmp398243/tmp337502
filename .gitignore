@@ -2,3 +2,4 @@ Manifest.toml
 report.xml
 /docs/build/
 /docs/stage/
+*.cov

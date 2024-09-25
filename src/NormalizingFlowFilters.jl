@@ -1,31 +1,12 @@
 
 """
-This module provides the [`greeting`](@ref) function for generating greetings.
-
-# Examples
-
-```jldoctest
-julia> greeting("Grant")
-"Hello Grant"
-
-```
+This module provides an interface to use conditional normalizing flow for data assimilation.
 """
 module NormalizingFlowFilters
 
-include("pkg_stuff.jl")
-
-using PackageExtensionCompat
-function __init__()
-    @require_extensions
-end
-
-export HAS_NATIVE_EXTENSIONS
-HAS_NATIVE_EXTENSIONS = PackageExtensionCompat.HAS_NATIVE_EXTENSIONS
-
-if HAS_NATIVE_EXTENSIONS
-    get_extension = Base.get_extension
-else
-    get_extension(mod, sym) = getfield(mod, sym)
-end
+include("options.jl")
+include("types.jl")
+include("assimilate_data.jl")
+include("train.jl")
 
 end # module NormalizingFlowFilters

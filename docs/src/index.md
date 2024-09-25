@@ -14,14 +14,3 @@ Modules = [NormalizingFlowFilters]
 ```@autodocs
 Modules = [NormalizingFlowFilters]
 ```
-
-
-# Extensions
-
-```@index
-Modules = [NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)]
-```
-
-```@autodocs
-Modules = [NormalizingFlowFilters.get_extension(NormalizingFlowFilters, :RandomExt)]
-```
