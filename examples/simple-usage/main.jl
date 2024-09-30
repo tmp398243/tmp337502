@@ -7,9 +7,10 @@ using NormalizingFlowFilters
 using Random: randn
 using Statistics: mean, std
 using Test
+using Pkg: Pkg
 
 ## Get odd input size fix for InvertibleNetworks.jl.
-Pkg.add(; url="https://github.com/slimgroup/InvertibleNetworks.jl/")
+Pkg.add(; url="https://github.com/slimgroup/InvertibleNetworks.jl#7055a9f")
 
 # Then define the filter.
 glow_config = ConditionalGlowOptions()

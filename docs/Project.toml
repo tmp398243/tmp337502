@@ -1,9 +1,10 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-NormalizingFlowFilters = "bdff3154-b03d-49d9-ae6e-73db1909c910"
+InvertibleNetworks = "b7115f24-5f92-4794-81e8-23b0ddb121d3"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+NormalizingFlowFilters = "bdff3154-b03d-49d9-ae6e-73db1909c910"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 Literate = "2.19"
