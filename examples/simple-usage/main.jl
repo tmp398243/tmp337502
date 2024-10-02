@@ -2,6 +2,11 @@
 # This example shows a simple use case for NormalizingFlowFilters.
 #
 # First, we import the necessary packages.
+
+using Pkg: Pkg
+Pkg.activate(@__DIR__)
+Pkg.instantiate()
+
 using CairoMakie
 using NormalizingFlowFilters
 using Random: randn
