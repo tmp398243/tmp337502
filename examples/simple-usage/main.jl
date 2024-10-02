@@ -9,9 +9,6 @@ using Statistics: mean, std
 using Test
 using Pkg: Pkg
 
-## Get odd input size fix for InvertibleNetworks.jl.
-Pkg.add(; url="https://github.com/slimgroup/InvertibleNetworks.jl#7055a9f")
-
 # Then define the filter.
 glow_config = ConditionalGlowOptions()
 network = NetworkConditionalGlow(2, glow_config)
@@ -68,7 +65,7 @@ fresh_samples = draw_posterior_samples(
 
 # Plot some training metrics.
 
-common_kwargs = (; linewidth=3, markersize=15)
+common_kwargs = (; linewidth=3)
 
 fig = Figure()
 
@@ -106,4 +103,4 @@ lines!(ax, test_epochs, x; color=lines_test.color, common_kwargs...)
 ax.xlabel = "epoch number"
 ax.ylabel = "loss: log determinant"
 
-display(fig)
+fig

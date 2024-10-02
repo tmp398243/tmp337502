@@ -4,9 +4,6 @@ using Documenter
 
 using Literate
 
-## Get odd input size fix for InvertibleNetworks.jl.
-Pkg.add(; url="https://github.com/slimgroup/InvertibleNetworks.jl#7055a9f")
-
 const REPO_ROOT = joinpath(@__DIR__, "..")
 const DOC_SRC = joinpath(@__DIR__, "src")
 const DOC_STAGE = joinpath(@__DIR__, "stage")

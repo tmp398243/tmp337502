@@ -9,3 +9,4 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [compat]
 Literate = "2.19"
 Random = "1.7"
+InvertibleNetworks = "2.3.0"
