@@ -11,24 +11,20 @@ const DOC_BUILD = joinpath(@__DIR__, "build")
 
 function gen_runner_code(pth, in_dir, out_dir)
     runner_code = """
-    $(Base.load_path_setup_code(false))
-
-    pushfirst!(Base.LOAD_PATH, $(repr(@__DIR__)))
-
     using Pkg: Pkg
-
-    using Literate
 
     build_scripts = $build_scripts
     build_notebooks = $build_notebooks
     in_dir = $(repr(in_dir))
     out_dir = $(repr(out_dir))
 
-    if isdir(in_dir)
-        Pkg.activate(in_dir)
-        Pkg.develop(; path=$(joinpath(@__DIR__, "..") |> repr))
-        Pkg.instantiate()
-    end
+    Pkg.activate(in_dir)
+    Pkg.develop(; path=$(joinpath(@__DIR__, "..") |> repr))
+    Pkg.add("Literate")
+    Pkg.resolve()
+    Pkg.instantiate()
+
+    using Literate
 
     upd(content) = update_header(content, $(repr(pth)); build_notebooks, build_scripts)
     in_pth = joinpath(in_dir, "main.jl")
