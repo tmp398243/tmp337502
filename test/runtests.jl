@@ -38,7 +38,6 @@ errs = Vector{String}()
 examples_dir = joinpath(@__DIR__, "..", "examples")
 
 report_testsets = @testset ReportingTestSet "" begin
-
     @info "Testing code quality with Aqua.jl."
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(NormalizingFlowFilters; ambiguities=false)
@@ -102,7 +101,6 @@ for example in readdir(examples_dir)
         link!(a_root, elem)
     end
     @test length(elements(a_root)) == a_nelems + b_nelems
-
 
     for c in attributes(b_root)
         a_attrs[c.name] += parse(Int, c.content)
