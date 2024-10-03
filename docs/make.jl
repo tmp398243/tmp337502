@@ -10,44 +10,44 @@ const DOC_STAGE = joinpath(@__DIR__, "stage")
 const DOC_BUILD = joinpath(@__DIR__, "build")
 
 function gen_runner_code(pth, in_dir, out_dir)
-    runner_code = """
-    $(Base.load_path_setup_code(false))
+    return runner_code = """
+           $(Base.load_path_setup_code(false))
 
-    pushfirst!(Base.LOAD_PATH, $(repr(@__DIR__)))
+           pushfirst!(Base.LOAD_PATH, $(repr(@__DIR__)))
 
-    using Pkg: Pkg
+           using Pkg: Pkg
 
-    using Literate
+           using Literate
 
-    build_scripts = $build_scripts
-    build_notebooks = $build_notebooks
-    in_dir = $(repr(in_dir))
-    out_dir = $(repr(out_dir))
+           build_scripts = $build_scripts
+           build_notebooks = $build_notebooks
+           in_dir = $(repr(in_dir))
+           out_dir = $(repr(out_dir))
 
-    if isdir(in_dir)
-        Pkg.activate(in_dir)
-        Pkg.develop(; path=$(joinpath(@__DIR__, "..") |> repr))
-        Pkg.instantiate()
-    end
+           if isdir(in_dir)
+               Pkg.activate(in_dir)
+               Pkg.develop(; path=$(joinpath(@__DIR__, "..") |> repr))
+               Pkg.instantiate()
+           end
 
-    upd(content) = update_header(content, $(repr(pth)); build_notebooks, build_scripts)
-    in_pth = joinpath(in_dir, "main.jl")
+           upd(content) = update_header(content, $(repr(pth)); build_notebooks, build_scripts)
+           in_pth = joinpath(in_dir, "main.jl")
 
-    # Copy other files over to out_dir.
-    Base.Filesystem.cptree(in_dir, out_dir)
-    rm(joinpath(out_dir, "main.jl"))
+           # Copy other files over to out_dir.
+           Base.Filesystem.cptree(in_dir, out_dir)
+           rm(joinpath(out_dir, "main.jl"))
 
-    include($(joinpath(@__DIR__, "utils.jl") |> repr))
+           include($(joinpath(@__DIR__, "utils.jl") |> repr))
 
-    # Build outputs.
-    Literate.markdown(in_pth, out_dir; name="index", preprocess=upd, execute=true)
-    if build_notebooks
-        Literate.notebook(in_pth, out_dir)
-    end
-    if build_scripts
-        Literate.script(in_pth, out_dir)
-    end
-    """
+           # Build outputs.
+           Literate.markdown(in_pth, out_dir; name="index", preprocess=upd, execute=true)
+           if build_notebooks
+               Literate.notebook(in_pth, out_dir)
+           end
+           if build_scripts
+               Literate.script(in_pth, out_dir)
+           end
+           """
 end
 
 # Move src files to staging area.
