@@ -25,7 +25,12 @@ optimizer = create_optimizer(optimizer_config)
 
 device = cpu
 training_config = TrainingOptions(;
-    n_epochs=32, num_post_samples=2^4, noise_lev_y=1e-3, noise_lev_x=1e-3, batch_size=2 ^ 5, validation_perc=(1 - 2 ^ -2)
+    n_epochs=32,
+    num_post_samples=2^4,
+    noise_lev_y=1e-3,
+    noise_lev_x=1e-3,
+    batch_size=2^5,
+    validation_perc=(1 - 2^-2),
 )
 
 filter = NormalizingFlowFilter(network, optimizer; device, training_config)
@@ -33,33 +38,29 @@ filter = NormalizingFlowFilter(network, optimizer; device, training_config)
 # We generate an ensemble.
 
 ## N ensemble members from a unit normal.
-N = 2 ^ 8
+N = 2^8
 prior_state = randn(Float64, 3, N)
 prior_state .-= mean(prior_state; dims=2)
 prior_state ./= std(prior_state; dims=2)
 
-to_table(a) = (;
-    x = a[1, :],
-    y = a[2, :],
-    z = a[3, :],
-)
+to_table(a) = (; x=a[1, :], y=a[2, :], z=a[3, :])
 table_prior_state = to_table(prior_state)
 
 fig = pairplot(
     table_prior_state => (
-        PairPlots.Hist(colormap=:Blues),
-        PairPlots.MarginDensity(bandwidth=0.2, color=RGBf((49,130,189)./255 ...)),
-        PairPlots.TrendLine(color=:red),
+        PairPlots.Hist(; colormap=:Blues),
+        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+        PairPlots.TrendLine(; color=:red),
         PairPlots.Correlation(),
     ),
     PairPlots.Truth(
-        to_table(mean(prior_state; dims=2)[:, 1]),
+        to_table(mean(prior_state; dims=2)[:, 1]);
         label="Mean Values",
         color=(:black, 0.5),
-        linewidth=4
+        linewidth=4,
     ),
 )
-supertitle = Label(fig[0, :], "prior state", fontsize=30)
+supertitle = Label(fig[0, :], "prior state"; fontsize=30)
 if isinteractive()
     display(fig)
 else
@@ -75,19 +76,19 @@ table_prior_obs = to_table(prior_obs)
 
 fig = pairplot(
     table_prior_obs => (
-        PairPlots.Hist(colormap=:Blues),
-        PairPlots.MarginDensity(bandwidth=0.2, color=RGBf((49,130,189)./255 ...)),
-        PairPlots.TrendLine(color=:red),
+        PairPlots.Hist(; colormap=:Blues),
+        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+        PairPlots.TrendLine(; color=:red),
         PairPlots.Correlation(),
     ),
     PairPlots.Truth(
-        to_table(mean(prior_obs; dims=2)[:, 1]),
+        to_table(mean(prior_obs; dims=2)[:, 1]);
         label="Mean Values",
         color=(:black, 0.5),
-        linewidth=4
+        linewidth=4,
     ),
 )
-supertitle = Label(fig[0, :], "prior observation", fontsize=30)
+supertitle = Label(fig[0, :], "prior observation"; fontsize=30)
 if isinteractive()
     display(fig)
 else
@@ -119,19 +120,19 @@ table_Z = to_table(Z)
 
 fig = pairplot(
     table_Z => (
-        PairPlots.Hist(colormap=:Blues),
-        PairPlots.MarginDensity(bandwidth=0.2, color=RGBf((49,130,189)./255 ...)),
-        PairPlots.TrendLine(color=:red),
+        PairPlots.Hist(; colormap=:Blues),
+        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+        PairPlots.TrendLine(; color=:red),
         PairPlots.Correlation(),
     ),
     PairPlots.Truth(
-        to_table(mean(Z; dims=2)[:, 1]),
+        to_table(mean(Z; dims=2)[:, 1]);
         label="Mean Values",
         color=(:black, 0.5),
-        linewidth=4
+        linewidth=4,
     ),
 )
-supertitle = Label(fig[0, :], "latent state", fontsize=30)
+supertitle = Label(fig[0, :], "latent state"; fontsize=30)
 if isinteractive()
     display(fig)
 else
@@ -145,19 +146,19 @@ table_posterior = to_table(posterior)
 
 fig = pairplot(
     table_posterior => (
-        PairPlots.Hist(colormap=:Blues),
-        PairPlots.MarginDensity(bandwidth=0.2, color=RGBf((49,130,189)./255 ...)),
-        PairPlots.TrendLine(color=:red),
+        PairPlots.Hist(; colormap=:Blues),
+        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+        PairPlots.TrendLine(; color=:red),
         PairPlots.Correlation(),
     ),
     PairPlots.Truth(
-        to_table(mean(posterior; dims=2)[:, 1]),
+        to_table(mean(posterior; dims=2)[:, 1]);
         label="Mean Values",
         color=(:black, 0.5),
-        linewidth=4
+        linewidth=4,
     ),
 )
-supertitle = Label(fig[0, :], "posterior state", fontsize=30)
+supertitle = Label(fig[0, :], "posterior state"; fontsize=30)
 if isinteractive()
     display(fig)
 else
@@ -226,7 +227,7 @@ lines!(ax, test_epochs, x; color=lines_test.color, common_kwargs...)
 ax.xlabel = "epoch number"
 ax.ylabel = "loss: log determinant"
 
-supertitle = Label(fig[0, :], "Training log", fontsize=30)
+supertitle = Label(fig[0, :], "Training log"; fontsize=30)
 if isinteractive()
     display(fig)
 else
