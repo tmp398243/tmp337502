@@ -73,11 +73,11 @@ report_testsets = @testset ReportingTestSet "" begin
             open(tester_path, "w") do f
                 write(f, runner_code)
             end
-            cmd = `$(Base.julia_cmd()) -- "$(tester_path)"`
+            cmd = `$(Base.julia_cmd()) --color=no -- "$(tester_path)"`
 
             @info "Testing $example with \"$(tester_path)\""
             TestReports.runtests!(errs, example, cmd, log_path)
-            @test length(errs) == 0 || errs[-1] != example
+            @test length(errs) == 0 || errs[end] != example
         end
     end
 end
@@ -109,12 +109,10 @@ end
 for c in attributes(a_root)
     a_root[c.name] = a_attrs[c.name]
 end
-TestReports.EzXML.prettyprint(a_root)
 
 outputfilename = joinpath(@__DIR__, "..", "report.xml")
 open(outputfilename, "w") do fh
     print(fh, a_root)
 end
 
-@show length(errs)
 exit(any_problems(report_testsets) || length(errs) > 0)
