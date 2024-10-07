@@ -2,7 +2,20 @@ using Flux: cpu, gpu
 using LinearAlgebra: norm
 using Random: randn
 
-export assimilate_data, draw_posterior_samples
+export assimilate_data, draw_posterior_samples, normalize_samples
+
+function normalize_samples(
+    G, X, Y, size_x; device=gpu, num_samples, batch_size, log_data=nothing
+)
+    Zx = zeros(Float32, size_x[1:(end - 1)]..., num_samples)
+    for i in 1:div(num_samples, batch_size)
+        X_forward_i = X[:, :, :, ((i - 1) * batch_size + 1):(i * batch_size)]
+        Y_forward_i = Y[:, :, :, ((i - 1) * batch_size + 1):(i * batch_size)]
+        Zx_fixed_train_i, _, _ = G.forward(device(X_forward_i), device(Y_forward_i))
+        Zx[:, :, :, ((i - 1) * batch_size + 1):(i * batch_size)] = cpu(Zx_fixed_train_i)
+    end
+    return Zx
+end
 
 function draw_posterior_samples(
     G, y, X, Y, size_x; device=gpu, num_samples, batch_size, log_data=nothing
@@ -14,7 +27,6 @@ function draw_posterior_samples(
 
     X_post = zeros(Float32, size_x[1:(end - 1)]..., num_samples)
     for i in 1:div(num_samples, batch_size)
-        #ZX_noise_i = randn(Float32, size_x[1:end-1]...,batch_size)|> device
         X_forward_i = X[:, :, :, ((i - 1) * batch_size + 1):(i * batch_size)]
         Y_forward_i = Y[:, :, :, ((i - 1) * batch_size + 1):(i * batch_size)]
         Zx_fixed_train_i, _, _ = G.forward(device(X_forward_i), device(Y_forward_i))
