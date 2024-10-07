@@ -14,7 +14,9 @@ using Statistics: mean, std
 using Test
 using Pkg: Pkg
 
-using PairPlots: PairPlots, pairplot
+@static if VERSION >= v"1.10"
+    using PairPlots: PairPlots, pairplot
+end
 
 # Then define the filter.
 glow_config = ConditionalGlowOptions()
@@ -46,25 +48,27 @@ prior_state ./= std(prior_state; dims=2)
 to_table(a) = (; x=a[1, :], y=a[2, :], z=a[3, :])
 table_prior_state = to_table(prior_state)
 
-fig = pairplot(
-    table_prior_state => (
-        PairPlots.Hist(; colormap=:Blues),
-        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
-        PairPlots.TrendLine(; color=:red),
-        PairPlots.Correlation(),
-    ),
-    PairPlots.Truth(
-        to_table(mean(prior_state; dims=2)[:, 1]);
-        label="Mean Values",
-        color=(:black, 0.5),
-        linewidth=4,
-    ),
-)
-supertitle = Label(fig[0, :], "prior state"; fontsize=30)
-if isinteractive()
-    display(fig)
-else
-    fig
+@static if VERSION >= v"1.10"
+    fig = pairplot(
+        table_prior_state => (
+            PairPlots.Hist(; colormap=:Blues),
+            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.TrendLine(; color=:red),
+            PairPlots.Correlation(),
+        ),
+        PairPlots.Truth(
+            to_table(mean(prior_state; dims=2)[:, 1]);
+            label="Mean Values",
+            color=(:black, 0.5),
+            linewidth=4,
+        ),
+    )
+    supertitle = Label(fig[0, :], "prior state"; fontsize=30)
+    if isinteractive()
+        display(fig)
+    else
+        fig
+    end
 end
 
 # Apply observation operator.
@@ -74,25 +78,27 @@ prior_obs = 0.5 .* deepcopy(prior_state) .+ 0.5 .* randn(Float64, 3, N)
 
 table_prior_obs = to_table(prior_obs)
 
-fig = pairplot(
-    table_prior_obs => (
-        PairPlots.Hist(; colormap=:Blues),
-        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
-        PairPlots.TrendLine(; color=:red),
-        PairPlots.Correlation(),
-    ),
-    PairPlots.Truth(
-        to_table(mean(prior_obs; dims=2)[:, 1]);
-        label="Mean Values",
-        color=(:black, 0.5),
-        linewidth=4,
-    ),
-)
-supertitle = Label(fig[0, :], "prior observation"; fontsize=30)
-if isinteractive()
-    display(fig)
-else
-    fig
+@static if VERSION >= v"1.10"
+    fig = pairplot(
+        table_prior_obs => (
+            PairPlots.Hist(; colormap=:Blues),
+            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.TrendLine(; color=:red),
+            PairPlots.Correlation(),
+        ),
+        PairPlots.Truth(
+            to_table(mean(prior_obs; dims=2)[:, 1]);
+            label="Mean Values",
+            color=(:black, 0.5),
+            linewidth=4,
+        ),
+    )
+    supertitle = Label(fig[0, :], "prior observation"; fontsize=30)
+    if isinteractive()
+        display(fig)
+    else
+        fig
+    end
 end
 
 # Then we assimilate an observation. Here, we just pick an arbitrary one.
@@ -118,25 +124,27 @@ Z = Z[1, 1, :, :]
 
 table_Z = to_table(Z)
 
-fig = pairplot(
-    table_Z => (
-        PairPlots.Hist(; colormap=:Blues),
-        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
-        PairPlots.TrendLine(; color=:red),
-        PairPlots.Correlation(),
-    ),
-    PairPlots.Truth(
-        to_table(mean(Z; dims=2)[:, 1]);
-        label="Mean Values",
-        color=(:black, 0.5),
-        linewidth=4,
-    ),
-)
-supertitle = Label(fig[0, :], "latent state"; fontsize=30)
-if isinteractive()
-    display(fig)
-else
-    fig
+@static if VERSION >= v"1.10"
+    fig = pairplot(
+        table_Z => (
+            PairPlots.Hist(; colormap=:Blues),
+            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.TrendLine(; color=:red),
+            PairPlots.Correlation(),
+        ),
+        PairPlots.Truth(
+            to_table(mean(Z; dims=2)[:, 1]);
+            label="Mean Values",
+            color=(:black, 0.5),
+            linewidth=4,
+        ),
+    )
+    supertitle = Label(fig[0, :], "latent state"; fontsize=30)
+    if isinteractive()
+        display(fig)
+    else
+        fig
+    end
 end
 
 # Visualize posterior.
@@ -144,25 +152,27 @@ end
 
 table_posterior = to_table(posterior)
 
-fig = pairplot(
-    table_posterior => (
-        PairPlots.Hist(; colormap=:Blues),
-        PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
-        PairPlots.TrendLine(; color=:red),
-        PairPlots.Correlation(),
-    ),
-    PairPlots.Truth(
-        to_table(mean(posterior; dims=2)[:, 1]);
-        label="Mean Values",
-        color=(:black, 0.5),
-        linewidth=4,
-    ),
-)
-supertitle = Label(fig[0, :], "posterior state"; fontsize=30)
-if isinteractive()
-    display(fig)
-else
-    fig
+@static if VERSION >= v"1.10"
+    fig = pairplot(
+        table_posterior => (
+            PairPlots.Hist(; colormap=:Blues),
+            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.TrendLine(; color=:red),
+            PairPlots.Correlation(),
+        ),
+        PairPlots.Truth(
+            to_table(mean(posterior; dims=2)[:, 1]);
+            label="Mean Values",
+            color=(:black, 0.5),
+            linewidth=4,
+        ),
+    )
+    supertitle = Label(fig[0, :], "posterior state"; fontsize=30)
+    if isinteractive()
+        display(fig)
+    else
+        fig
+    end
 end
 
 # The posterior should have mean 0 and some TBD variance.
