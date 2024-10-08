@@ -65,9 +65,9 @@ end
 
 # Process examples and put them in staging area.
 build_examples = true
-build_notebooks = true
+build_notebooks = false
 build_scripts = true
-examples = ["Simple Usage" => "simple-usage"]
+examples = ["Simple Usage n=2" => "simple-usage-2", "Simple Usage n=3" => "simple-usage-3"]
 examples_markdown = []
 
 mkpath(joinpath(DOC_STAGE, "examples"))
@@ -114,7 +114,7 @@ makedocs(;
         canonical="https://tmp398243.github.io/tmp337502",
         edit_link="main",
         assets=String[],
-        size_threshold=2 * 2^20,
+        size_threshold=20 * 2^20,
     ),
     repo="github.com/tmp398243/tmp337502",
     pages=[

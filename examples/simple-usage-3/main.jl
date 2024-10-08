@@ -18,8 +18,17 @@ using Pkg: Pkg
     using PairPlots: PairPlots, pairplot
 end
 
+function display_interactive(fig)
+    if isinteractive()
+        display(fig)
+    else
+        fig
+    end
+end
+
 # Then define the filter.
-glow_config = ConditionalGlowOptions()
+Nx = 3
+glow_config = ConditionalGlowOptions(; chan_x=Nx, chan_y=Nx)
 network = NetworkConditionalGlow(2, glow_config)
 
 optimizer_config = OptimizerOptions(; lr=1e-3)
@@ -41,68 +50,92 @@ filter = NormalizingFlowFilter(network, optimizer; device, training_config)
 
 ## N ensemble members from a unit normal.
 N = 2^8
-prior_state = randn(Float64, 3, N)
+prior_state = randn(Float64, Nx, N)
 prior_state .-= mean(prior_state; dims=2)
 prior_state ./= std(prior_state; dims=2)
 
-to_table(a) = (; x=a[1, :], y=a[2, :], z=a[3, :])
+to_table(a; prefix=:x) = (; (Symbol(prefix, i) => row for (i, row) in enumerate(eachrow(a)))...)
+combine_tables(a, b) = (; a..., b...)
 table_prior_state = to_table(prior_state)
 
 @static if VERSION >= v"1.10"
+    table_prior_state_mean = to_table(mean(prior_state; dims=2)[:, 1])
     fig = pairplot(
         table_prior_state => (
             PairPlots.Hist(; colormap=:Blues),
             PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
+            PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            to_table(mean(prior_state; dims=2)[:, 1]);
+            table_prior_state_mean;
             label="Mean Values",
             color=(:black, 0.5),
             linewidth=4,
         ),
     )
     supertitle = Label(fig[0, :], "prior state"; fontsize=30)
-    if isinteractive()
-        display(fig)
-    else
-        fig
-    end
+    resize_to_layout!(fig)
+    display_interactive(fig)
 end
 
 # Apply observation operator.
 
 ## Identity observation operator with some noise.
-prior_obs = 0.5 .* deepcopy(prior_state) .+ 0.5 .* randn(Float64, 3, N)
+prior_obs = 0.5 .* deepcopy(prior_state) .+ 0.5 .* randn(Float64, size(prior_state))
 
-table_prior_obs = to_table(prior_obs)
+table_prior_obs = to_table(prior_obs; prefix=:y)
 
 @static if VERSION >= v"1.10"
+    table_prior_obs_mean = to_table(mean(prior_obs; dims=2)[:, 1]; prefix=:y)
     fig = pairplot(
         table_prior_obs => (
             PairPlots.Hist(; colormap=:Blues),
             PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
+            PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            to_table(mean(prior_obs; dims=2)[:, 1]);
+            table_prior_obs_mean;
             label="Mean Values",
             color=(:black, 0.5),
             linewidth=4,
         ),
     )
     supertitle = Label(fig[0, :], "prior observation"; fontsize=30)
-    if isinteractive()
-        display(fig)
-    else
-        fig
-    end
+    resize_to_layout!(fig)
+    display_interactive(fig)
+end
+
+# Look at how observations correlate to data.
+
+@static if VERSION >= v"1.10"
+    combo_table = combine_tables(table_prior_state, table_prior_obs)
+    combo_table_mean = combine_tables(table_prior_state_mean, table_prior_obs_mean)
+    fig = pairplot(
+        combo_table => (
+            PairPlots.Hist(; colormap=:Blues),
+            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.TrendLine(; color=:red),
+            PairPlots.Correlation(),
+            PairPlots.Scatter(),
+        ),
+        PairPlots.Truth(
+            combo_table_mean;
+            label="Mean Values",
+            color=(:black, 0.5),
+            linewidth=4,
+        ),
+    )
+    supertitle = Label(fig[0, :], "prior state-observation"; fontsize=30)
+    resize_to_layout!(fig)
+    display_interactive(fig)
 end
 
 # Then we assimilate an observation. Here, we just pick an arbitrary one.
-y_obs = [0.0, 0.0, 0.0]
+y_obs = zeros(Nx)
 log_data = Dict{Symbol,Any}()
 posterior = assimilate_data(filter, prior_state, prior_obs, y_obs, log_data)
 
@@ -122,57 +155,56 @@ Z = normalize_samples(
 )
 Z = Z[1, 1, :, :]
 
-table_Z = to_table(Z)
+table_Z = to_table(Z; prefix=:z)
 
 @static if VERSION >= v"1.10"
+    table_Z_mean =to_table(mean(Z; dims=2)[:, 1]; prefix=:z)
     fig = pairplot(
         table_Z => (
             PairPlots.Hist(; colormap=:Blues),
             PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
+            PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            to_table(mean(Z; dims=2)[:, 1]);
+            table_Z_mean;
             label="Mean Values",
             color=(:black, 0.5),
             linewidth=4,
         ),
     )
     supertitle = Label(fig[0, :], "latent state"; fontsize=30)
-    if isinteractive()
-        display(fig)
-    else
-        fig
-    end
+    resize_to_layout!(fig)
+    display_interactive(fig)
 end
 
-# Visualize posterior.
+# Look at posterior mean and standard deviation.
 @show mean(posterior; dims=2) std(posterior; dims=2)
 
+# Visualize posterior.
 table_posterior = to_table(posterior)
 
 @static if VERSION >= v"1.10"
+    table_posterior_mean =to_table(mean(posterior; dims=2)[:, 1])
     fig = pairplot(
         table_posterior => (
             PairPlots.Hist(; colormap=:Blues),
             PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
+            PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            to_table(mean(posterior; dims=2)[:, 1]);
+            table_posterior_mean;
             label="Mean Values",
             color=(:black, 0.5),
             linewidth=4,
         ),
     )
     supertitle = Label(fig[0, :], "posterior state"; fontsize=30)
-    if isinteractive()
-        display(fig)
-    else
-        fig
-    end
+    resize_to_layout!(fig)
+    display_interactive(fig)
 end
 
 # The posterior should have mean 0 and some TBD variance.
@@ -224,7 +256,9 @@ ax.xlabel = "epoch number"
 ax.ylabel = "loss: 2-norm"
 fig[1, end + 1] = Legend(fig, ax; labelsize=14, unique=true)
 
-ax.title = "Batch size: $(training_config.batch_size)"
+N_train = round(Int, N * training_config.validation_perc)
+N_valid = N - N_train
+ax.title = "Training: $N_train, Validation: $N_valid, Batch size: $(training_config.batch_size)"
 
 ax = Axis(fig[2, 1])
 
@@ -238,8 +272,5 @@ ax.xlabel = "epoch number"
 ax.ylabel = "loss: log determinant"
 
 supertitle = Label(fig[0, :], "Training log"; fontsize=30)
-if isinteractive()
-    display(fig)
-else
-    fig
-end
+resize_to_layout!(fig)
+display_interactive(fig)
