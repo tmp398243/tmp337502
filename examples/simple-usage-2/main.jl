@@ -9,8 +9,8 @@ Pkg.instantiate()
 
 using CairoMakie
 using NormalizingFlowFilters
-using Random: randn
-using Statistics: mean, std
+using Random: randn, seed!
+using Statistics: mean, std, cov
 using Test
 using Pkg: Pkg
 
@@ -26,8 +26,16 @@ function display_interactive(fig)
     end
 end
 
+smalltest = get(ENV, "NormalizingFlowFilters_smalltest", "false")
+if ! (smalltest in ("true", "false"))
+    error("Invalid environment variable value NormalizingFlowFilters_smalltest: $smalltest")
+end
+smalltest = smalltest == "true"
+
 # Then define the filter.
+N = smalltest ? 2^4 : 2^11
 Nx = 2
+seed!(0x84fb4b2c)
 glow_config = ConditionalGlowOptions(; chan_x=Nx, chan_y=Nx)
 network = NetworkConditionalGlow(2, glow_config)
 
@@ -36,12 +44,12 @@ optimizer = create_optimizer(optimizer_config)
 
 device = cpu
 training_config = TrainingOptions(;
-    n_epochs=32,
-    num_post_samples=2^4,
+    n_epochs=smalltest ? 10 : 45,
+    num_post_samples=1,
     noise_lev_y=1e-3,
     noise_lev_x=1e-3,
-    batch_size=2^5,
-    validation_perc=(1 - 2^-2),
+    batch_size=smalltest ? 2^2 : 2^9,
+    validation_perc=2^(-1),
 )
 
 filter = NormalizingFlowFilter(network, optimizer; device, training_config)
@@ -49,10 +57,10 @@ filter = NormalizingFlowFilter(network, optimizer; device, training_config)
 # We generate an ensemble.
 
 ## N ensemble members from a unit normal.
-N = 2^8
 prior_state = randn(Float64, Nx, N)
 prior_state .-= mean(prior_state; dims=2)
 prior_state ./= std(prior_state; dims=2)
+
 
 function to_table(a; prefix=:x)
     return (; (Symbol(prefix, i) => row for (i, row) in enumerate(eachrow(a)))...)
@@ -61,11 +69,12 @@ combine_tables(a, b) = (; a..., b...)
 table_prior_state = to_table(prior_state)
 
 @static if VERSION >= v"1.10"
+    kde_bandwidth = training_config.noise_lev_x / PairPlots.KernelDensity.default_bandwidth(prior_state[1, :])
     table_prior_state_mean = to_table(mean(prior_state; dims=2)[:, 1])
     fig = pairplot(
         table_prior_state => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -91,7 +100,7 @@ table_prior_obs = to_table(prior_obs; prefix=:y)
     fig = pairplot(
         table_prior_obs => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -113,7 +122,7 @@ end
     fig = pairplot(
         combo_table => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -155,7 +164,7 @@ table_Z = to_table(Z; prefix=:z)
     fig = pairplot(
         table_Z => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -169,8 +178,23 @@ table_Z = to_table(Z; prefix=:z)
     display_interactive(fig)
 end
 
-# Look at posterior mean and standard deviation.
-@show mean(posterior; dims=2) std(posterior; dims=2)
+# Look at prior mean.
+display_interactive(mean(prior_state; dims=2))
+
+# Look at prior covariance.
+display_interactive(cov(prior_state; dims=2))
+
+# Look at latent mean.
+display_interactive(mean(Z; dims=2))
+
+# Look at latent covariance.
+display_interactive(cov(Z; dims=2))
+
+# Look at posterior mean.
+display_interactive(mean(posterior; dims=2))
+
+# Look at posterior covariance.
+display_interactive(cov(posterior; dims=2))
 
 # Visualize posterior.
 table_posterior = to_table(posterior)
@@ -180,7 +204,7 @@ table_posterior = to_table(posterior)
     fig = pairplot(
         table_posterior => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=0.2, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -213,8 +237,6 @@ fresh_samples = draw_posterior_samples(
 ]
 
 @test true;
-
-@show mean(fresh_samples; dims=2) std(fresh_samples; dims=2)
 
 # Plot some training metrics.
 

@@ -20,6 +20,7 @@ function gen_runner_code(testsetname, testfilename, logfilename)
         using TestReports: TestReports, ReportingTestSet, any_problems, report
         using TestReports.EzXML: prettyprint
 
+        ENV["NormalizingFlowFilters_smalltest"] = "true"
         ts = @testset ReportingTestSet $(repr(testsetname)) begin
             include($(repr(testfilename)))
         end

@@ -34,7 +34,7 @@ smalltest = smalltest == "true"
 
 # Then define the filter.
 N = smalltest ? 2^4 : 2^11
-Nx = 3
+Nx = 4
 seed!(0x84fb4b2c)
 glow_config = ConditionalGlowOptions(; chan_x=Nx, chan_y=Nx)
 network = NetworkConditionalGlow(2, glow_config)
