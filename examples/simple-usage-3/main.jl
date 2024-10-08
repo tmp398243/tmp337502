@@ -54,7 +54,9 @@ prior_state = randn(Float64, Nx, N)
 prior_state .-= mean(prior_state; dims=2)
 prior_state ./= std(prior_state; dims=2)
 
-to_table(a; prefix=:x) = (; (Symbol(prefix, i) => row for (i, row) in enumerate(eachrow(a)))...)
+function to_table(a; prefix=:x)
+    return (; (Symbol(prefix, i) => row for (i, row) in enumerate(eachrow(a)))...)
+end
 combine_tables(a, b) = (; a..., b...)
 table_prior_state = to_table(prior_state)
 
@@ -69,10 +71,7 @@ table_prior_state = to_table(prior_state)
             PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            table_prior_state_mean;
-            label="Mean Values",
-            color=(:black, 0.5),
-            linewidth=4,
+            table_prior_state_mean; label="Mean Values", color=(:black, 0.5), linewidth=4
         ),
     )
     supertitle = Label(fig[0, :], "prior state"; fontsize=30)
@@ -98,10 +97,7 @@ table_prior_obs = to_table(prior_obs; prefix=:y)
             PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            table_prior_obs_mean;
-            label="Mean Values",
-            color=(:black, 0.5),
-            linewidth=4,
+            table_prior_obs_mean; label="Mean Values", color=(:black, 0.5), linewidth=4
         ),
     )
     supertitle = Label(fig[0, :], "prior observation"; fontsize=30)
@@ -123,10 +119,7 @@ end
             PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            combo_table_mean;
-            label="Mean Values",
-            color=(:black, 0.5),
-            linewidth=4,
+            combo_table_mean; label="Mean Values", color=(:black, 0.5), linewidth=4
         ),
     )
     supertitle = Label(fig[0, :], "prior state-observation"; fontsize=30)
@@ -158,7 +151,7 @@ Z = Z[1, 1, :, :]
 table_Z = to_table(Z; prefix=:z)
 
 @static if VERSION >= v"1.10"
-    table_Z_mean =to_table(mean(Z; dims=2)[:, 1]; prefix=:z)
+    table_Z_mean = to_table(mean(Z; dims=2)[:, 1]; prefix=:z)
     fig = pairplot(
         table_Z => (
             PairPlots.Hist(; colormap=:Blues),
@@ -168,10 +161,7 @@ table_Z = to_table(Z; prefix=:z)
             PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            table_Z_mean;
-            label="Mean Values",
-            color=(:black, 0.5),
-            linewidth=4,
+            table_Z_mean; label="Mean Values", color=(:black, 0.5), linewidth=4
         ),
     )
     supertitle = Label(fig[0, :], "latent state"; fontsize=30)
@@ -186,7 +176,7 @@ end
 table_posterior = to_table(posterior)
 
 @static if VERSION >= v"1.10"
-    table_posterior_mean =to_table(mean(posterior; dims=2)[:, 1])
+    table_posterior_mean = to_table(mean(posterior; dims=2)[:, 1])
     fig = pairplot(
         table_posterior => (
             PairPlots.Hist(; colormap=:Blues),
@@ -196,10 +186,7 @@ table_posterior = to_table(posterior)
             PairPlots.Scatter(),
         ),
         PairPlots.Truth(
-            table_posterior_mean;
-            label="Mean Values",
-            color=(:black, 0.5),
-            linewidth=4,
+            table_posterior_mean; label="Mean Values", color=(:black, 0.5), linewidth=4
         ),
     )
     supertitle = Label(fig[0, :], "posterior state"; fontsize=30)
