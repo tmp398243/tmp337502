@@ -27,7 +27,7 @@ function display_interactive(fig)
 end
 
 smalltest = get(ENV, "NormalizingFlowFilters_smalltest", "false")
-if ! (smalltest in ("true", "false"))
+if !(smalltest in ("true", "false"))
     error("Invalid environment variable value NormalizingFlowFilters_smalltest: $smalltest")
 end
 smalltest = smalltest == "true"
@@ -61,7 +61,6 @@ prior_state = randn(Float64, Nx, N)
 prior_state .-= mean(prior_state; dims=2)
 prior_state ./= std(prior_state; dims=2)
 
-
 function to_table(a; prefix=:x)
     return (; (Symbol(prefix, i) => row for (i, row) in enumerate(eachrow(a)))...)
 end
@@ -69,12 +68,16 @@ combine_tables(a, b) = (; a..., b...)
 table_prior_state = to_table(prior_state)
 
 @static if VERSION >= v"1.10"
-    kde_bandwidth = training_config.noise_lev_x / PairPlots.KernelDensity.default_bandwidth(prior_state[1, :])
+    kde_bandwidth =
+        training_config.noise_lev_x /
+        PairPlots.KernelDensity.default_bandwidth(prior_state[1, :])
     table_prior_state_mean = to_table(mean(prior_state; dims=2)[:, 1])
     fig = pairplot(
         table_prior_state => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(;
+                bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)
+            ),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -100,7 +103,9 @@ table_prior_obs = to_table(prior_obs; prefix=:y)
     fig = pairplot(
         table_prior_obs => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(;
+                bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)
+            ),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -122,7 +127,9 @@ end
     fig = pairplot(
         combo_table => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(;
+                bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)
+            ),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -164,7 +171,9 @@ table_Z = to_table(Z; prefix=:z)
     fig = pairplot(
         table_Z => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(;
+                bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)
+            ),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
@@ -204,7 +213,9 @@ table_posterior = to_table(posterior)
     fig = pairplot(
         table_posterior => (
             PairPlots.Hist(; colormap=:Blues),
-            PairPlots.MarginDensity(; bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)),
+            PairPlots.MarginDensity(;
+                bandwidth=kde_bandwidth, color=RGBf((49, 130, 189) ./ 255...)
+            ),
             PairPlots.TrendLine(; color=:red),
             PairPlots.Correlation(),
             PairPlots.Scatter(),
