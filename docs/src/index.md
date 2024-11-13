@@ -4,7 +4,7 @@ CurrentModule = NormalizingFlowFilters
 
 # NormalizingFlowFilters
 
-Documentation for [NormalizingFlowFilters](https://github.com/tmp398243/tmp337502).
+Documentation for [NormalizingFlowFilters](https://github.com/DataAssimilation/NormalizingFlowFilters.jl).
 
 
 ```@index

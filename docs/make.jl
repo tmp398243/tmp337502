@@ -110,13 +110,13 @@ makedocs(;
     source=DOC_STAGE,
     build=DOC_BUILD,
     format=Documenter.HTML(;
-        repolink="https://github.com/tmp398243/tmp337502",
-        canonical="https://tmp398243.github.io/tmp337502",
+        repolink="https://github.com/DataAssimilation/NormalizingFlowFilters.jl",
+        canonical="https://DataAssimilation.github.io/NormalizingFlowFilters.jl",
         edit_link="main",
         assets=String[],
         size_threshold=20 * 2^20,
     ),
-    repo="github.com/tmp398243/tmp337502",
+    repo="github.com/DataAssimilation/NormalizingFlowFilters.jl",
     pages=[
         "Home" => "index.md",
         "Examples" => examples_markdown,
