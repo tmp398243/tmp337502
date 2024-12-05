@@ -1,4 +1,4 @@
-# NormalizingFlowFilters
+# NormalizingFlowFilters.jl
 
 |  |     |
 |--|:---:|
